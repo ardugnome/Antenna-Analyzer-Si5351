@@ -21,6 +21,8 @@ Frequency settings depend on span but analyzer covers from 1 to 35 MHz, 43-57MHz
 Frequency setting "31" is a full HF spectrum sweep (1-30MHz) 
 VNA software is available from the DG7EAO site or elswere to control the analyzer via the Arduino USB port if desired.
 
+2/20/2019 - A new version starting the sweep at 50Khz will be uploaded shortly, should be helpful for 137KHz and 472Khz experiments. It makes use of the span potentiometer RV2 in conjunction with the frequency potentiometer RV1 to start the scan at the lowest frequency the chip permits. Both RV1 and RV2 should be set for minimum value.
+
 Connections:
    
 Power =  9V battery to Arduino RAW pin.
@@ -31,9 +33,6 @@ Arduino Nano 3v3 can be used to power the Si5351 and provide 3v3 to TFT
 
 Note: Leave ICSP header alone in case you brick the Nano, and connect to the corresponding Arduino pins.
 (ex. MOSI=11, MISO=12, SCK=13)
-
-
-
 
 
 Credits:
