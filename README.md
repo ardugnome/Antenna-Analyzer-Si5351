@@ -21,7 +21,7 @@ Frequency settings depend on span but analyzer covers from 1 to 35 MHz, 43-57MHz
 Frequency setting "31" is a full HF spectrum sweep (1-30MHz) 
 VNA software is available from the DG7EAO site or elswere to control the analyzer via the Arduino USB port if desired.
 
-2/20/2019 - A new version starting the sweep at 100Khz will be uploaded shortly, should be helpful for 137KHz and 472Khz experiments. It makes use of the span potentiometer RV2 in conjunction with the frequency potentiometer RV1 to start the scan at the lowest frequency the chip permits. Both RV1 and RV2 should be set for minimum value.
+         2/20/2019 - A new version starting the sweep at 100Khz has been uploaded, should be helpful for 137KHz and 472Khz experiments. It makes use of the span potentiometer RV2 in conjunction with the frequency potentiometer RV1 to start the scan at the lowest frequency the chip permits. Both RV1 and RV2 should be set for minimum value.
 
 Connections:
    
