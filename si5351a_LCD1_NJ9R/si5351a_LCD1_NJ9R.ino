@@ -7,8 +7,8 @@
 // Please also refer to SiLabs AN619 which describes all the registers to use
 //
 //
-// Update by Relu Jianu NJ9R 1/20/2019
-// Adds Scan width between 1 and 5 MHz on A3
+// Update by Relu Jianu NJ9R 2/20/2019
+// Adds Scan width between 100kHz and 5 MHz on A3
 // Also added touch functionality for later update.
 //
 
@@ -34,31 +34,31 @@ char stLast[20]="";
 TFT_ILI9341 myGLCD = TFT_ILI9341(); 
 
 // Variablen für Messung
-double Fstart_MHz = 1;      // Start Frequency for sweep
+float Fstart_MHz = 1.0;      // Start Frequency for sweep
 //double Fstop_MHz = 10;    // Stop Frequency for sweep
-double Fstop_MHz = 30;      // Stop Frequency for sweep
-double current_freq_MHz;    // Temp variable used during sweep
+float Fstop_MHz = 30.0;      // Stop Frequency for sweep
+float current_freq_MHz;    // Temp variable used during sweep
 long serial_input_number;   // Used to build number from serial stream
-int num_steps = 100;        // Number of steps to use in the sweep
+int num_steps = 101;        // Number of steps to use in the sweep
 char incoming_char;         // Character read from serial stream
-  int x;
-double freq;                // Frequency
+  float x;
+float freq;                // Frequency
 bool pc_flag;               // Use PC values and not Analog Value
 
 // Variablen für Display
 double vswrArray[120];       // Array for SWR
 int z = 0;                   // Index for Array
-double SwrFreq = 14;         // Variable for freq. with SWR Min.
+float SwrFreq = 14.00;         // Variable for freq. with SWR Min.
 double SwrMin = 100;         // Variable for SWR Min. 
-double Freq1 = 1;            // Freq. Left bottom line display
-double Freq2 = 15;           // Freq. Left center line display
-double Freq3 = 30;           // Freq. Left right line display
+float Freq1 = 1.00;            // Freq. Left bottom line display
+float Freq2 = 15.00;           // Freq. Left center line display
+float Freq3 = 30.00;           // Freq. Left right line display
 unsigned long milliold = 0;  // Milliseconds for debouncing interrupt
 bool flag = 0;               // we set to 1 at interrupt, in void loop perform_sweep
 double counter = 0;          // Counter to ignore first interrupts
 bool flag_graph = 1;         // Marker - Was Graph drawn?
 bool deleteflag = 0;         // Marker Display Clear
-int span=0;
+float span=0;
 // double VSWR;
 
 /*************************
@@ -277,36 +277,38 @@ else
 
 delay(100);
 
-  // Read Soll on Pot A2
-  int soll = analogRead(A2);
-
-  x = (soll / 30)+span;
-  if (x > 30) x = 31; // full band scan
-  if (soll > 850) x = 48; // 850 min
-  if (soll > 890) x = 50; // 850 min
-  if (soll > 925) x = 52; // 850 min
-  if (soll > 970) x = 144; // 2m
-  if (soll > 1000) x = 146;
-  if (soll > 1020) x = 148;  
-    
 
  //set span at X-1 or X+1 corresponding to A3 and add pot
- int rawwidth = analogRead(A3);
- span=map(rawwidth,1,1023,1,5);
+float rawwidth = analogRead(A3);
+ span=map(rawwidth,1,1023,1,50);
+
+  // Read Soll on Pot A2
+float soll = analogRead(A2);
+
+  x = (soll / 30)+span/10;
+  if (x > 30) x = 31; // full band scan
+  if (soll > 850) x = 48.00; // 850 min
+  if (soll > 890) x = 50.00; // 850 min
+  if (soll > 925) x = 52.00; // 850 min
+  if (soll > 970) x = 144.00; // 2m
+  if (soll > 1000) x = 146.00;
+  if (soll > 1020) x = 148.00;  
+    
+
  // bei pc_flag = true; take PC values and not analog setting 
  
  
  // Setze Frequenzbereich
  if (pc_flag == false)
  {
- Fstart_MHz = x-span;  // Start Frequency for sweep
- Fstop_MHz = x+span;   // Stop Frequency for sweep 
+ Fstart_MHz = (x-(span/10));  // Start Frequency for sweep
+ Fstop_MHz = x+span/10;   // Stop Frequency for sweep 
  num_steps = 102;   // Steps
  }
  
- Freq1 = x-span;      // Bottom line Display Freq. Left
+ Freq1 = x-span/10;      // Bottom line Display Freq. Left
  Freq2 = x;        // Bottom line Display Freq. center
- Freq3 = x+span;      // Bottom line Display Freq. Right
+ Freq3 = x+span/10;      // Bottom line Display Freq. Right
 
   
  if (pc_flag == true)
@@ -319,12 +321,12 @@ delay(100);
  // Special with x = 0 do big scan
  if (x==31 && pc_flag == false)
  {
- Fstart_MHz = 1;  // Start Frequency for sweep
- Fstop_MHz = 30;   // Stop Frequency for sweep
+ Fstart_MHz = 1.0;  // Start Frequency for sweep
+ Fstop_MHz = 30.0;   // Stop Frequency for sweep
 
- Freq1 = 1;      // Bottom line Display Freq. Left
- Freq2 = 15;     // Bottom line Display Freq. Middle  
- Freq3 = 30;     // Bottom line Display Freq. Right
+ Freq1 = 1.0;      // Bottom line Display Freq. Left
+ Freq2 = 15.0;     // Bottom line Display Freq. Middle  
+ Freq3 = 30.0;     // Bottom line Display Freq. Right
  }
   
  
@@ -333,19 +335,15 @@ delay(100);
 
     myGLCD.setTextSize(3);
     myGLCD.setCursor(3, 10);
-    myGLCD.println("Set Center ");
-    myGLCD.setCursor(3, 40); 
-    myGLCD.println("Frequency= ");
-    myGLCD.setCursor(193,40);
-    myGLCD.print(String(x) + " MHz");
+    myGLCD.println("Set Center Freq");
+    myGLCD.setCursor(130,40);
+    myGLCD.println(String(x) + " MHz");
        
     myGLCD.setTextSize(3);
     myGLCD.setCursor(3, 90);
-    myGLCD.println("Set Scan ");
-    myGLCD.setCursor(3, 120); 
-    myGLCD.println("Width= ");
-    myGLCD.setCursor(193,120);
-    myGLCD.print(String(span) + " MHz");
+    myGLCD.println("Set Scan Width");
+    myGLCD.setCursor(130,120);
+    myGLCD.println(String(span/10) + " MHz");
     deleteflag = 1;
   }
  } 
@@ -396,7 +394,7 @@ void Perform_sweep(){
     // 150 Ohm >> SWR 3
     // 470 Ohm >> SWR 9,4
     // 330 Ohm >> SWR 6.6
-    //  10 Ohm >> SWR 5      
+    // 250 Ohm >> SWR 5      
     
  // Corrections 
    if (x==31)
@@ -411,16 +409,15 @@ void Perform_sweep(){
    if ((Fstart_MHz>=1) && ( Fstop_MHz<35))
    {
    //Serial.print("HF:");
-   /* if (VSWR <1100)
+    if (VSWR <1100)
       {VSWR=1001;}
-  
-     if ((VSWR>1401)&& (VSWR <7001))
-     {VSWR=VSWR*0.88;}
-    else if ((VSWR <10999)&&(VSWR >7000))
-      {VSWR=VSWR*0.95;} */
-    if ((VSWR <20500)&&(VSWR >11000))
-      {VSWR=VSWR*0.65;}
-    else if ((VSWR <45501)&&(VSWR >20501))
+  else if ((VSWR>1401)&& (VSWR <7001))
+     {VSWR=VSWR*1.31;}
+  /* else if ((VSWR>7000 )&&(VSWR <10999))
+      {VSWR=VSWR*0.85;} 
+    else if ((VSWR>11000 )&&(VSWR<20500 ))
+      {VSWR=VSWR*0.65;}*/
+    else if ((VSWR >20501)&&(VSWR<45501 ))
       {VSWR=VSWR*0.4;}
     
 
@@ -542,7 +539,7 @@ void CreateGrid()
 
   myGLCD.print("SWR ");
   myGLCD.print(SwrMin);
-  myGLCD.print("  Freq ");
+  myGLCD.print("     Freq ");
   myGLCD.print(SwrFreq,3);
   
     double maxSwr = 10; //was10
@@ -562,11 +559,11 @@ void CreateGrid()
 
         // 3 frequency labels
         myGLCD.setCursor(0, 215);
-        myGLCD.print(Freq1,0);
-        myGLCD.setCursor(140, 215);
-        myGLCD.print(Freq2,0);
-        myGLCD.setCursor(280, 215);
-        myGLCD.print(Freq3,0);
+        myGLCD.print(Freq1,2);
+        myGLCD.setCursor(123, 215);
+        myGLCD.print(Freq2,2);
+        myGLCD.setCursor(240, 215);
+        myGLCD.print(Freq3,2);
 
         myGLCD.setTextSize(1);
         myGLCD.setCursor(5, 35);
