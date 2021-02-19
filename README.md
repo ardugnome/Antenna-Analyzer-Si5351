@@ -1,5 +1,5 @@
 # Antenna-Analyzer-Si5351
-An arduino (nano) based antenna analyzer based on K6BEZ design with modifications by DG7EAO.
+An Arduino (nano) based antenna analyzer based on K6BEZ design with modifications by DG7EAO.
 
 This analyzer is a working model of the DG7EAO antenna analyzer based on the K6BEZ design, 
 with additional hardware modification in the form of the original MCP6002 op-amp, 
@@ -12,14 +12,14 @@ Unit is powered by 9v battery on Arduino Nano's RAW pin but it can take power of
 Upon power-up it performs a 1-30 MHz sweep then reads the value of the frequency potentiometer 
 at A2 and the value of the sweep width potentiometer at A3.
 By depressing SW1 user is presented with a menu that allows frequency and sweep width 
-selection via the two potentometers mentioned above. 
+selection via the two potentiometers mentioned above. 
 Range was extended to 153MHz but it is unusable past 150MHz
 Calibration file is included but is based on my own personal build and AA143 diodes used.
 Power from Si5351 has been reduced to 2ma or -3dBm for better performance in the VHF range.
 TFT screen requires 5v to 3v3 level converters!
 Frequency settings depend on span but analyzer covers from 1 to 35 MHz, 43-57MHz, 139-153MHz. 
 Frequency setting "31" is a full HF spectrum sweep (1-30MHz) 
-VNA software is available from the DG7EAO site or elswere to control the analyzer via the Arduino USB port if desired.
+VNA software is available from the DG7EAO site or elsewhere to control the analyzer via the Arduino USB port if desired.
 
          2/20/2019 - A new version starting the sweep at 100Khz has been uploaded, should be helpful for 137KHz and 472Khz experiments. It makes use of the span potentiometer RV2 in conjunction with the frequency potentiometer RV1 to start the scan at the lowest frequency the chip permits. Both RV1 and RV2 should be set for minimum value.
 
